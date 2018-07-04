@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<head>
+
+    <meta charset="UTF-8">
+    <title>Trivia Game</title>
+
+    <!-- jQuery link -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+    <!-- CSS links: Bootstrap, reset, style, font awesome -->
+    <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+    <!-- Fonts! -->
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Game Display -->
+
+    <!-- Display at all times -->
+    <h1>Trivia Game!</h1>
+
+    <!-- Display at start, then disappear -->
+    <button id="startButton">Start</button>
+
+    <div id="questionPage">
+        <!-- Display after start, then disappear once question was answered -->
+        <h2 id="htmlQuestion"></h2>
+        <h2 id="htmlAnswers"></h2>
+    </div>
+
+
+    <div id="answerPage">
+        <!-- Display after question is answered -->
+        <h2 id="htmlCorrectIncorrect"></h2>
+        <button id="buttonClick">Add 30</button>
+
+        <h2>Time remaining: 
+            <span id="htmlTimer"></span>
+        </h2>
+    </div>
+
+    <div id="completePage">
+        <h2>Thanks for playing yo.</h2>
+        <h3 id="htmlCorrectAnswers"></h3>
+        <h3 id="htmlIncorrectAnswers"></h3>
+    </div>
+    
+
+
+    
+
+    <!-- My local JS file -->
+    <!-- <script type="text/javascript" src="assets/javascript/app.js"></script> -->
+
+    <script>
+        $(document).ready(function() {
+            console.log("js linked up");
+
+            var questionArray = [
+                {
+                    questionText: "what's 1+1?",
+                    answerArray: ["1","2","3","4"],
+                    correctAnswer: "2"
+                },
+                {
+                    questionText: "what's 2+2?",
+                    answerArray: ["2","4","6","8"],
+                    correctAnswer: "4"
+                },
+                {
+                    questionText: "what's 3+3?",
+                    answerArray: ["3","6","9","12"],
+                    correctAnswer: "6"
+                },
+                {
+                    questionText: "what's 4+4?",
+                    answerArray: ["4","8","12","16"],
+                    correctAnswer: "8"
+                }
+            ];
+
+            console.log(questionArray);
+
+
+            var activeQuestion = 0;
+            var timerSeconds;
+            var isGameOver = false;
+            var ticktock;
+            var answersCorrect = 0;
+            var answersIncorrect = 0;
+            var answerPageTimerSeconds;
+
+
+            function hidePages() {
+                $("#questionPage").css("display","none");
+                $("#answerPage").css("display","none");
+                $("#completePage").css("display","none");
+            };
+
+            hidePages();
+            
+            
+
+            
+            // Prints question and answers
+            function printQandA() {
+                $("#htmlQuestion").html("");
+                $("#htmlQuestion").text(questionArray[activeQuestion].questionText);
+                
+                $("#htmlAnswers").html("");
+                for (var n=0; n < questionArray[activeQuestion].answerArray.length; n++) {
+                    var nAnswer = questionArray[activeQuestion].answerArray[n]
+                    var $answerDisplay = $("<button>");
+                    $answerDisplay.addClass("clickableAnswer");
+                    $answerDisplay.attr("data-value",nAnswer);
+                    $answerDisplay.text(nAnswer);
+                    $("#htmlAnswers").append($answerDisplay);
+                }
+            };
+
+            $(document).on("click", ".clickableAnswer", function() {
+                console.log($(this).attr("data-value"));
+                var userAnswer = $(this).attr("data-value");
+                var correctAnswer = questionArray[activeQuestion].correctAnswer;
+                console.log("userAnswer: " + userAnswer);
+                console.log("correctAnswer: " + correctAnswer);
+                
+                // checks if the answer is correct
+                if (userAnswer === correctAnswer) {
+                    $("#htmlCorrectIncorrect").text("Nice! You got it right!");
+                    answersCorrect++;
+                    resetTimer();
+                } else {
+                    $("#htmlCorrectIncorrect").text("Wrong! The correct answer was: " + questionArray[activeQuestion].correctAnswer);
+                    answersIncorrect++;
+                }
+                activeQuestion++;
+                checkIfDone();
+            });
+
+
+            function checkIfDone() {
+                if (activeQuestion === questionArray.length) {
+                    console.log("no more questions to show");
+                    clearInterval(ticktock);
+                    // empty all divs w/ changed html
+                    hidePages();
+                    showCompletePage();
+
+
+                } else {
+                    console.log("active Q: " + activeQuestion + ". Q array length: " + questionArray.length);
+                    printQandA();
+
+                }
+            };
+            
+            // random test button
+            $("#buttonClick").on("click", function() {
+                //printCorrectAnswer();
+                timerSeconds += 30;
+            });
+
+
+            function printTimer() {
+                $("#htmlTimer").text(timerSeconds);
+            };
+
+            // Counts down the timer and displays to the page. Also checks if timer is at/below zero.
+            function timerCountdown() {
+                timerSeconds--;
+                printTimer();
+
+                // move to next question if timer is zero
+                if (timerSeconds <= 0) {
+                    activeQuestion++;
+                    console.log("activeQuestion: " + activeQuestion);
+                    answersIncorrect++;
+                    resetTimer();
+                    hideAnswer();
+                }
+
+                checkIfDone();
+            };
+
+            
+            function answerPageTime() {
+                setTimeout(aFunction,1000*5)
+                answerPageTimerSeconds
+            }
+
+
+            function hideStartButton() {
+                $("#startButton").css("display","none");
+            };
+
+            function showQuestionPage() {
+                $("#questionPage").css("display","");
+            };
+
+            function showAnswerPage() {
+                $("#answerPage").css("display","");
+            };
+
+            function hideCompletePage() {
+                $("#answerPage").css("display","none");
+            };
+
+            function hideAnswer() {
+                $("#htmlCorrectIncorrect").text("")
+            }
+
+            function showCompletePage() {
+                $("#questionPage").css("display","");
+                $("#htmlCorrectAnswers").text("You got " + answersCorrect + " answers correct.");
+                $("#htmlIncorrectAnswers").text("You got " + answersIncorrect + " answers wrong.");
+            };
+
+            // start button clicked
+            $("#startButton").on("click", function() {
+                hideStartButton();
+                showQuestionPage();
+                showAnswerPage();
+                checkIfDone();
+                ticktock = setInterval(timerCountdown, 1000 * 1);
+                resetTimer();
+                printQandA();
+            });
+
+            function resetTimer() {
+                timerSeconds = 10;
+            };
+        
+
+        }); // close Doc.ready
+
+
+/*
+        var $answerLoop = $("<button>");
+        $answerLoop.attr("data-user-answer",n);
+        $answerLoop.text(questionArray[activeQuestion].answerArray[n]);
+
+
+        var $existingbuttonTag = $("<button>");
+        $existingbuttonTag.attr("data-to-do",n);
+        $existingbuttonTag.addClass("checkbox");
+        $existingbuttonTag.text("X");
+
+        // Append the button to the to do item
+        $existingpTag.prepend($existingbuttonTag);
+        $("#to-dos").append($existingpTag);
+        */
+
+
+
+    </script>
+
+</body>
