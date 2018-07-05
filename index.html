@@ -31,23 +31,25 @@
         <!-- Display after start, then disappear once question was answered -->
         <h2 id="htmlQuestion"></h2>
         <h2 id="htmlAnswers"></h2>
-    </div>
-
-
-    <div id="answerPage">
-        <!-- Display after question is answered -->
-        <h2 id="htmlCorrectIncorrect"></h2>
-        <button id="buttonClick">Add 30</button>
-
+        
         <h2>Time remaining: 
             <span id="htmlTimer"></span>
         </h2>
     </div>
 
+
+    <div id="resultPage">
+        <!-- Display after question is answered -->
+        <h2 id="htmlResult"></h2>
+    </div>
+
     <div id="completePage">
         <h2>Thanks for playing yo.</h2>
-        <h3 id="htmlCorrectAnswers"></h3>
-        <h3 id="htmlIncorrectAnswers"></h3>
+        <h3 id="htmlAnswersCorrect"></h3>
+        <h3 id="htmlAnswersIncorrect"></h3>
+        <h3 id="htmlAnswersUnanswered"></h3>
+        <button id="playAgainButton">Play again</button>
+
     </div>
     
 
@@ -84,32 +86,52 @@
                 }
             ];
 
-            console.log(questionArray);
-
-
             var activeQuestion = 0;
             var timerSeconds;
-            var isGameOver = false;
-            var ticktock;
+            var tickTock;
             var answersCorrect = 0;
             var answersIncorrect = 0;
-            var answerPageTimerSeconds;
+            var answersUnanswered = 0;
+            var gameIsDone = false;
 
 
-            function hidePages() {
-                $("#questionPage").css("display","none");
-                $("#answerPage").css("display","none");
-                $("#completePage").css("display","none");
+
+            hideAllPages();
+
+
+            // start button clicked
+            $("#startButton").on("click", function() {
+                hideStartButton();
+                showQuestionPage();
+                tickTock = setInterval(timerCountdown, 1000 * 1);
+                resetTimer();
+                printQandA();
+            });
+
+            function resetTimer() {
+                timerSeconds = 10;
+                $("#htmlTimer").text(timerSeconds);
             };
 
-            hidePages();
-            
-            
+            $("#playAgainButton").on("click",function() {
+                activeQuestion = 0;
+                answersCorrect = 0;
+                answersIncorrect = 0;
+                answersUnanswered = 0;
+                gameIsDone = false;
+                tickTock = setInterval(timerCountdown, 1000 * 1);
+                resetTimer();
+                printQandA();
 
+                hideCompletePage();
+                showQuestionPage();
+
+            })
+            
             
             // Prints question and answers
             function printQandA() {
-                $("#htmlQuestion").html("");
+                $("#htmlQuestion").text("");
                 $("#htmlQuestion").text(questionArray[activeQuestion].questionText);
                 
                 $("#htmlAnswers").html("");
@@ -124,137 +146,136 @@
             };
 
             $(document).on("click", ".clickableAnswer", function() {
-                console.log($(this).attr("data-value"));
                 var userAnswer = $(this).attr("data-value");
                 var correctAnswer = questionArray[activeQuestion].correctAnswer;
                 console.log("userAnswer: " + userAnswer);
                 console.log("correctAnswer: " + correctAnswer);
                 
+
                 // checks if the answer is correct
                 if (userAnswer === correctAnswer) {
-                    $("#htmlCorrectIncorrect").text("Nice! You got it right!");
+                    $("#htmlResult").text("Nice! You got it right!");
                     answersCorrect++;
-                    resetTimer();
                 } else {
-                    $("#htmlCorrectIncorrect").text("Wrong! The correct answer was: " + questionArray[activeQuestion].correctAnswer);
+                    $("#htmlResult").text("Wrong! The correct answer was: " + questionArray[activeQuestion].correctAnswer);
                     answersIncorrect++;
                 }
+                hideQuestionPage();
+                showResultPage();
+
+                setTimeout(function() {
+                    showQuestionPage();
+                    hideResultPage();
+                    resetTimer();
+                },1000*3);
+
+                
+
+                resetTimer();
                 activeQuestion++;
                 checkIfDone();
+
+                if (gameIsDone !== true) {
+                    printQandA();
+                }
+
             });
 
 
+            
             function checkIfDone() {
                 if (activeQuestion === questionArray.length) {
-                    console.log("no more questions to show");
-                    clearInterval(ticktock);
-                    // empty all divs w/ changed html
-                    hidePages();
-                    showCompletePage();
+                    gameIsDone = true;
+                    clearInterval(tickTock);
 
-
-                } else {
-                    console.log("active Q: " + activeQuestion + ". Q array length: " + questionArray.length);
-                    printQandA();
-
+                    setTimeout(showCompletePage,1000*3);
                 }
             };
-            
-            // random test button
-            $("#buttonClick").on("click", function() {
-                //printCorrectAnswer();
-                timerSeconds += 30;
-            });
 
-
-            function printTimer() {
-                $("#htmlTimer").text(timerSeconds);
-            };
 
             // Counts down the timer and displays to the page. Also checks if timer is at/below zero.
             function timerCountdown() {
                 timerSeconds--;
-                printTimer();
+                $("#htmlTimer").text(timerSeconds);
 
                 // move to next question if timer is zero
                 if (timerSeconds <= 0) {
+                    answersUnanswered++;
+                    $("#htmlResult").text("Out of time! The correct answer was: " + questionArray[activeQuestion].correctAnswer);
+
+                    hideQuestionPage();
+                    showResultPage();
+
+                    setTimeout(function() {
+                        showQuestionPage();
+                        hideResultPage();
+                        resetTimer();
+                    },1000*3);
+                    
                     activeQuestion++;
-                    console.log("activeQuestion: " + activeQuestion);
+                    console.log(activeQuestion);
                     answersIncorrect++;
                     resetTimer();
-                    hideAnswer();
+                    checkIfDone();
                 }
-
-                checkIfDone();
+                if (gameIsDone !== true) {
+                    printQandA();
+                }
             };
 
             
-            function answerPageTime() {
-                setTimeout(aFunction,1000*5)
-                answerPageTimerSeconds
-            }
-
+            
 
             function hideStartButton() {
                 $("#startButton").css("display","none");
             };
 
+            function hideAllPages() {
+                $("#questionPage").css("display","none");
+                $("#resultPage").css("display","none");
+                $("#completePage").css("display","none");
+            };
+
+            function showAllPages() {
+                $("#questionPage").css("display","");
+                $("#resultPage").css("display","");
+                $("#completePage").css("display","");
+            }
+
             function showQuestionPage() {
                 $("#questionPage").css("display","");
             };
 
-            function showAnswerPage() {
-                $("#answerPage").css("display","");
+            function hideQuestionPage() {
+                $("#questionPage").css("display","none");
+            };
+
+            function showResultPage() {
+                $("#resultPage").css("display","");
+            };
+
+            function hideResultPage() {
+                $("#resultPage").css("display","none");
+            };
+
+            function showCompletePage() {
+                hideQuestionPage();
+                hideResultPage();
+                $("#htmlAnswersCorrect").text("Correct Answers: " + answersCorrect);
+                $("#htmlAnswersIncorrect").text("Incorrect Answers: "+ answersIncorrect);
+                $("#htmlAnswersUnanswered").text("Unanswered: " + answersUnanswered);
+                $("#completePage").css("display","");
             };
 
             function hideCompletePage() {
-                $("#answerPage").css("display","none");
+                $("#completePage").css("display","none");
             };
 
-            function hideAnswer() {
-                $("#htmlCorrectIncorrect").text("")
-            }
-
-            function showCompletePage() {
-                $("#questionPage").css("display","");
-                $("#htmlCorrectAnswers").text("You got " + answersCorrect + " answers correct.");
-                $("#htmlIncorrectAnswers").text("You got " + answersIncorrect + " answers wrong.");
-            };
-
-            // start button clicked
-            $("#startButton").on("click", function() {
-                hideStartButton();
-                showQuestionPage();
-                showAnswerPage();
-                checkIfDone();
-                ticktock = setInterval(timerCountdown, 1000 * 1);
-                resetTimer();
-                printQandA();
-            });
-
-            function resetTimer() {
-                timerSeconds = 10;
-            };
+            
+            
         
 
         }); // close Doc.ready
-
-
-/*
-        var $answerLoop = $("<button>");
-        $answerLoop.attr("data-user-answer",n);
-        $answerLoop.text(questionArray[activeQuestion].answerArray[n]);
-
-
-        var $existingbuttonTag = $("<button>");
-        $existingbuttonTag.attr("data-to-do",n);
-        $existingbuttonTag.addClass("checkbox");
-        $existingbuttonTag.text("X");
-
-        // Append the button to the to do item
-        $existingpTag.prepend($existingbuttonTag);
-        $("#to-dos").append($existingpTag);
-        */
 
 
 
