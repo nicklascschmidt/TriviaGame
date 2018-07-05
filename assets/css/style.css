@@ -1,0 +1,39 @@
+
+
+h1, h2, h3, h4, h5, h6 {
+    color: white;
+    font-size: 5rem;
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+}
+
+.button {
+    color: black;
+    background-color: white;
+    font-family: 'Lato', sans-serif;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+    border-radius: 15px;
+}
+
+.center-button {
+    text-align: center;
+}
+
+p {
+    color: white;
+    font-family: 'Lato', sans-serif;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.star-wars-background { 
+    background-image: url(../images/tatooine-background.jpg);
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 900px;
+}
+

@@ -4,281 +4,70 @@
     <meta charset="UTF-8">
     <title>Trivia Game</title>
 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
     <!-- jQuery link -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 
     <!-- CSS links: Bootstrap, reset, style, font awesome -->
     <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
 
     <!-- Fonts! -->
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 
 </head>
 <body>
+
     <!-- Game Display -->
 
-    <!-- Display at all times -->
-    <h1>Trivia Game!</h1>
+    <div class="container star-wars-background block center">
 
-    <!-- Display at start, then disappear -->
-    <button id="startButton">Start</button>
+        <!-- Display at all times -->
+        <h2>Trivia Game!</h2>
 
-    <div id="questionPage">
-        <!-- Display after start, then disappear once question was answered -->
-        <h2 id="htmlQuestion"></h2>
-        <h2 id="htmlAnswers"></h2>
-        
-        <h2>Time remaining: 
-            <span id="htmlTimer"></span>
-        </h2>
+        <!-- Display at start, then disappear -->
+        <p><button id="startButton" class="button">Start</button></p>
+
+        <div id="questionPage">
+            <!-- Display after start, then disappear once question was answered -->
+            <p id="htmlQuestion"></p>
+            <p id="htmlAnswers"></p>
+            
+            <p>Time remaining: 
+                <span id="htmlTimer"></span>
+            </p>
+        </div>
+
+
+        <div id="resultPage">
+            <!-- Display after question is answered -->
+            <p id="htmlResult"></p>
+        </div>
+
+        <div id="completePage">
+            <p>Thanks for playing yo.</p>
+            <p id="htmlAnswersCorrect"></p>
+            <p id="htmlAnswersIncorrect"></p>
+            <p id="htmlAnswersUnanswered"></p>
+            <p><button id="playAgainButton" class="button">Play again</button></p>
+
+        </div>
     </div>
-
-
-    <div id="resultPage">
-        <!-- Display after question is answered -->
-        <h2 id="htmlResult"></h2>
-    </div>
-
-    <div id="completePage">
-        <h2>Thanks for playing yo.</h2>
-        <h3 id="htmlAnswersCorrect"></h3>
-        <h3 id="htmlAnswersIncorrect"></h3>
-        <h3 id="htmlAnswersUnanswered"></h3>
-        <button id="playAgainButton">Play again</button>
-
-    </div>
-    
 
 
     
 
     <!-- My local JS file -->
-    <!-- <script type="text/javascript" src="assets/javascript/app.js"></script> -->
+    <script type="text/javascript" src="assets/javascript/app.js"></script>
 
-    <script>
-        $(document).ready(function() {
-            console.log("js linked up");
-
-            var questionArray = [
-                {
-                    questionText: "what's 1+1?",
-                    answerArray: ["1","2","3","4"],
-                    correctAnswer: "2"
-                },
-                {
-                    questionText: "what's 2+2?",
-                    answerArray: ["2","4","6","8"],
-                    correctAnswer: "4"
-                },
-                {
-                    questionText: "what's 3+3?",
-                    answerArray: ["3","6","9","12"],
-                    correctAnswer: "6"
-                },
-                {
-                    questionText: "what's 4+4?",
-                    answerArray: ["4","8","12","16"],
-                    correctAnswer: "8"
-                }
-            ];
-
-            var activeQuestion = 0;
-            var timerSeconds;
-            var tickTock;
-            var answersCorrect = 0;
-            var answersIncorrect = 0;
-            var answersUnanswered = 0;
-            var gameIsDone = false;
-
-
-
-            hideAllPages();
-
-
-            // start button clicked
-            $("#startButton").on("click", function() {
-                hideStartButton();
-                showQuestionPage();
-                tickTock = setInterval(timerCountdown, 1000 * 1);
-                resetTimer();
-                printQandA();
-            });
-
-            function resetTimer() {
-                timerSeconds = 10;
-                $("#htmlTimer").text(timerSeconds);
-            };
-
-            $("#playAgainButton").on("click",function() {
-                activeQuestion = 0;
-                answersCorrect = 0;
-                answersIncorrect = 0;
-                answersUnanswered = 0;
-                gameIsDone = false;
-                tickTock = setInterval(timerCountdown, 1000 * 1);
-                resetTimer();
-                printQandA();
-
-                hideCompletePage();
-                showQuestionPage();
-
-            })
-            
-            
-            // Prints question and answers
-            function printQandA() {
-                $("#htmlQuestion").text("");
-                $("#htmlQuestion").text(questionArray[activeQuestion].questionText);
-                
-                $("#htmlAnswers").html("");
-                for (var n=0; n < questionArray[activeQuestion].answerArray.length; n++) {
-                    var nAnswer = questionArray[activeQuestion].answerArray[n]
-                    var $answerDisplay = $("<button>");
-                    $answerDisplay.addClass("clickableAnswer");
-                    $answerDisplay.attr("data-value",nAnswer);
-                    $answerDisplay.text(nAnswer);
-                    $("#htmlAnswers").append($answerDisplay);
-                }
-            };
-
-            $(document).on("click", ".clickableAnswer", function() {
-                var userAnswer = $(this).attr("data-value");
-                var correctAnswer = questionArray[activeQuestion].correctAnswer;
-                console.log("userAnswer: " + userAnswer);
-                console.log("correctAnswer: " + correctAnswer);
-                
-
-                // checks if the answer is correct
-                if (userAnswer === correctAnswer) {
-                    $("#htmlResult").text("Nice! You got it right!");
-                    answersCorrect++;
-                } else {
-                    $("#htmlResult").text("Wrong! The correct answer was: " + questionArray[activeQuestion].correctAnswer);
-                    answersIncorrect++;
-                }
-                hideQuestionPage();
-                showResultPage();
-
-                setTimeout(function() {
-                    showQuestionPage();
-                    hideResultPage();
-                    resetTimer();
-                },1000*3);
-
-                
-
-                resetTimer();
-                activeQuestion++;
-                checkIfDone();
-
-                if (gameIsDone !== true) {
-                    printQandA();
-                }
-
-            });
-
-
-            
-            function checkIfDone() {
-                if (activeQuestion === questionArray.length) {
-                    gameIsDone = true;
-                    clearInterval(tickTock);
-
-                    setTimeout(showCompletePage,1000*3);
-                }
-            };
-
-
-            // Counts down the timer and displays to the page. Also checks if timer is at/below zero.
-            function timerCountdown() {
-                timerSeconds--;
-                $("#htmlTimer").text(timerSeconds);
-
-                // move to next question if timer is zero
-                if (timerSeconds <= 0) {
-                    answersUnanswered++;
-                    $("#htmlResult").text("Out of time! The correct answer was: " + questionArray[activeQuestion].correctAnswer);
-
-                    hideQuestionPage();
-                    showResultPage();
-
-                    setTimeout(function() {
-                        showQuestionPage();
-                        hideResultPage();
-                        resetTimer();
-                    },1000*3);
-                    
-                    activeQuestion++;
-                    console.log(activeQuestion);
-                    answersIncorrect++;
-                    resetTimer();
-                    checkIfDone();
-                }
-                if (gameIsDone !== true) {
-                    printQandA();
-                }
-            };
-
-            
-            
-
-            function hideStartButton() {
-                $("#startButton").css("display","none");
-            };
-
-            function hideAllPages() {
-                $("#questionPage").css("display","none");
-                $("#resultPage").css("display","none");
-                $("#completePage").css("display","none");
-            };
-
-            function showAllPages() {
-                $("#questionPage").css("display","");
-                $("#resultPage").css("display","");
-                $("#completePage").css("display","");
-            }
-
-            function showQuestionPage() {
-                $("#questionPage").css("display","");
-            };
-
-            function hideQuestionPage() {
-                $("#questionPage").css("display","none");
-            };
-
-            function showResultPage() {
-                $("#resultPage").css("display","");
-            };
-
-            function hideResultPage() {
-                $("#resultPage").css("display","none");
-            };
-
-            function showCompletePage() {
-                hideQuestionPage();
-                hideResultPage();
-                $("#htmlAnswersCorrect").text("Correct Answers: " + answersCorrect);
-                $("#htmlAnswersIncorrect").text("Incorrect Answers: "+ answersIncorrect);
-                $("#htmlAnswersUnanswered").text("Unanswered: " + answersUnanswered);
-                $("#completePage").css("display","");
-            };
-
-            function hideCompletePage() {
-                $("#completePage").css("display","none");
-            };
-
-            
-            
-        
-
-        }); // close Doc.ready
-
-
-
-    </script>
+    
 
 </body>
