@@ -1,5 +1,15 @@
 
 
+.black-background {
+  background-color: black;
+  background-repeat: repeat;
+  min-height: 100vh;
+  overflow-y: scroll;
+  background-attachment: fixed;
+  background-position: center; 
+
+}
+
 h1, h2, h3, h4, h5, h6 {
     color: white;
     font-size: 5rem;
@@ -30,10 +40,8 @@ p {
 
 .star-wars-background { 
     background-image: url(../images/tatooine-background.jpg);
-    background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;
-    background-size: cover;
-    height: 900px;
+    height: 100vh;
 }
 

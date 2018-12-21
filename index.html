@@ -22,40 +22,41 @@
 <body>
 
     <!-- Game Display -->
+    <div class='black-background'>
+        <div class="container star-wars-background block center">
 
-    <div class="container star-wars-background block center">
+            <!-- Display at all times -->
+            <h2>Star Wars Trivia Game</h2>
 
-        <!-- Display at all times -->
-        <h2>Star Wars Trivia Game</h2>
+            <!-- Display at start, then disappear -->
+            <p><button id="startButton" class="button">Start</button></p>
 
-        <!-- Display at start, then disappear -->
-        <p><button id="startButton" class="button">Start</button></p>
+            <div id="questionPage">
+                <!-- Display after start, then disappear once question was answered -->
+                <p id="htmlQuestion"></p>
+                <p id="htmlAnswers"></p>
+                
+                <p>Time remaining: 
+                    <span id="htmlTimer"></span>
+                </p>
+            </div>
 
-        <div id="questionPage">
-            <!-- Display after start, then disappear once question was answered -->
-            <p id="htmlQuestion"></p>
-            <p id="htmlAnswers"></p>
-            
-            <p>Time remaining: 
-                <span id="htmlTimer"></span>
-            </p>
+
+            <div id="resultPage">
+                <!-- Display after question is answered -->
+                <p id="htmlResult"></p>
+            </div>
+
+            <div id="completePage">
+                <p>Thanks for playing yo.</p>
+                <p id="htmlAnswersCorrect"></p>
+                <p id="htmlAnswersIncorrect"></p>
+                <p id="htmlAnswersUnanswered"></p>
+                <p><button id="playAgainButton" class="button">Play again</button></p>
+
+            </div>
         </div>
-
-
-        <div id="resultPage">
-            <!-- Display after question is answered -->
-            <p id="htmlResult"></p>
-        </div>
-
-        <div id="completePage">
-            <p>Thanks for playing yo.</p>
-            <p id="htmlAnswersCorrect"></p>
-            <p id="htmlAnswersIncorrect"></p>
-            <p id="htmlAnswersUnanswered"></p>
-            <p><button id="playAgainButton" class="button">Play again</button></p>
-
-        </div>
-    </div>
+      </div>
 
 
     
